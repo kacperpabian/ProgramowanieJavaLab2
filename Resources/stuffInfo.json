@@ -1,0 +1,20 @@
+{ "stuffInfo":
+	{
+		"stuff": [
+		{
+			"type":"klawiatura",
+			"name":"Razer Dethadder",
+			"img":"Resources/Dethadder.png",
+			"Description":"Klawiatura mechaniczna Razer"
+			
+		},
+		{
+			"type":"yy",
+			"name":"Razer Dethadder",
+			"img":"Resources/Dethadder.png",
+			"Description":"Klawiatura mechaniczna Razer"
+			
+		}
+				]
+	}
+}
