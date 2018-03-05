@@ -1,0 +1,24 @@
+{ "stuffInfo":
+	{
+		"stuff": [
+		{
+			"type":"klawiatura",
+			"name":"Razer Dethadder",
+			"imgPath":"/Dethadder.png",
+			"description":"Klawiatura mechaniczna Razer"
+		},
+		{
+			"type":"myszka",
+			"name":"Zowie FK1",
+			"imgPath":"/zowiefk1.png",
+			"description":"Myszka firmy Zowie"
+		},
+		{
+			"type":"podkładka",
+			"name":"Razer Goliathus",
+			"imgPath":"/razerpodkladka.png",
+			"description":"Podkładka pod mysz Razer"
+		}
+				]
+	}
+}

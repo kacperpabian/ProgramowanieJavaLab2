@@ -27,7 +27,7 @@ public class Controller {
 
             stage.setTitle("Stuff");
             stage.setScene(new Scene(root1));
-            stage.getIcons().add(new Image("file:Resources/icon.png"));
+            stage.getIcons().add(new Image("/icon.png"));
             stage.show();
             stage.setOnCloseRequest(t -> {
                 Platform.exit();

@@ -6,6 +6,13 @@ public class Stuff {
     private String imgPath;
     private String description;
 
+    public Stuff(String type, String name, String imgPath, String description) {
+        this.type = type;
+        this.name = name;
+        this.imgPath = imgPath;
+        this.description = description;
+    }
+
     public String getType() {
         return type;
     }
