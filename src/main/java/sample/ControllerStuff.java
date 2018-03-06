@@ -1,29 +1,30 @@
 package sample;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.json.JSONArray;
+import javafx.stage.Stage;
 import org.json.JSONException;
-import org.json.JSONObject;
 
+import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.ArrayList;
+import java.io.*;
+import java.net.URL;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 
-public class ControllerStuff {
+public class ControllerStuff implements Initializable {
 
     @FXML
     private TableView<TableViewStuff> tableStuff;
@@ -36,9 +37,37 @@ public class ControllerStuff {
     @FXML
     private TableColumn<TableViewStuff, ImageView> columnImage;
 
+    @FXML
+    private TextField inputDescription;
+
+    @FXML
+    private TextField inputType;
+
+    @FXML
+    private TextField inputName;
+
+    @FXML
+    private Button buttonDelete;
+    @FXML
+    private Button saveState;
+    @FXML
+    private Label labelType;
+    @FXML
+    private Label labelName;
+    @FXML
+    private Label labelDescription;
+    @FXML
+    private Button buttonAddImage;
+    @FXML
+    private Button buttonAdd;
+    @FXML
+    ComboBox comboSetLanguage;
+
     private String jsonStuffInfo = "Resources/stuffInfo.json";
     private String jsonStuffString = "";
     List<Stuff> stuffList;
+    Stuff newStuff = new Stuff();
+
 
     public String getJsonStuffString() {
         return jsonStuffString;
@@ -56,18 +85,19 @@ public class ControllerStuff {
         this.jsonStuffInfo = jsonStuff;
     }
 
-    public void chooseTemplate()
+    public String chooseTemplate()
     {
 
         FileDialog dialog = new FileDialog((Frame)null, "Select File to Open");
         dialog.setMode(FileDialog.LOAD);
         dialog.setVisible(true);
         String file = dialog.getDirectory() + dialog.getFile();
-        setJsonStuffInfo(file);
+        return file;
     }
 
     public void readFile() throws FileNotFoundException {
-        chooseTemplate();
+        String jsonPath = chooseTemplate();
+        setJsonStuffInfo(jsonPath);
 
         File file = new File(getJsonStuffInfo());
         Scanner sc = new Scanner(file);
@@ -85,35 +115,34 @@ public class ControllerStuff {
     public void getJson() throws JSONException, FileNotFoundException {
 
         readFile();
-        Map<String, Stuff> javaRootMapObject = new Gson().fromJson(getJsonStuffString(), Map.class);
-        System.out.println(((Map)((List) ((Map) (javaRootMapObject.get("stuffInfo"))).get("stuff")).get(0)).values());
-        stuffList = new ArrayList<>();
-        for(int i=0; i<((List) ((Map) (javaRootMapObject.get("stuffInfo"))).get("stuff")).size(); i++)
-        {
-            Stuff tempStuff = new Stuff(
-                    ((Map)((List) ((Map) (javaRootMapObject.get("stuffInfo"))).get("stuff")).get(i)).get("type").toString(),
-                    ((Map)((List) ((Map) (javaRootMapObject.get("stuffInfo"))).get("stuff")).get(i)).get("name").toString(),
-                    ((Map)((List) ((Map) (javaRootMapObject.get("stuffInfo"))).get("stuff")).get(i)).get("imgPath").toString(),
-                    ((Map)((List) ((Map) (javaRootMapObject.get("stuffInfo"))).get("stuff")).get(i)).get("description").toString()
-            );
-            stuffList.add(tempStuff);
-        }
-
+        Stuff[] stuffs = new Gson().fromJson(getJsonStuffString(), Stuff[].class);
+        stuffList = new ArrayList<Stuff>(Arrays.asList(stuffs));;
         setTableStuff();
-
     }
 
     public void getStuffToTable(ObservableList<TableViewStuff> data)
     {
         for (int i = 0; i < stuffList.size(); i++)
         {
-            TableViewStuff tableViewStuffTemp = new TableViewStuff(stuffList.get(i).getType(), stuffList.get(i).getName(), stuffList.get(i).getDescription(),
+            TableViewStuff tableViewStuffTemp = new TableViewStuff(stuffList.get(i).getId(), stuffList.get(i).getType(), stuffList.get(i).getName(), stuffList.get(i).getDescription(),
             new ImageView(new Image(stuffList.get(i).getImgPath())));
             data.add(tableViewStuffTemp);
         }
     }
 
-
+    public void deleteButton()
+    {
+        TableViewStuff selectedItem = tableStuff.getSelectionModel().getSelectedItem();
+        tableStuff.getItems().remove(selectedItem);
+        System.out.println(selectedItem.getId());
+        for(int i=0; i<stuffList.size(); i++)
+        {
+            if(stuffList.get(i).getId() == selectedItem.getId())
+            {
+                stuffList.remove(i);
+            }
+        }
+    }
     public void setTableStuff ()
     {
 
@@ -137,4 +166,129 @@ public class ControllerStuff {
 
     }
 
+    public void addItem(){
+        passStuff();
+        stuffList.add(newStuff);
+        int m = stuffList.size() -1;
+        TableViewStuff stuffTemp = new TableViewStuff(stuffList.get(m).getId(), stuffList.get(m).getType(), stuffList.get(m).getName(), stuffList.get(m).getDescription(),
+                new ImageView(new Image(stuffList.get(m).getImgPath())));
+        tableStuff.getItems().add(stuffTemp);
+        clearBoxes();
+    }
+
+    public void clearBoxes()
+    {
+        inputType.setText("");
+        inputDescription.setText("");
+        inputName.setText("");
+    }
+    public void saveJson()
+    {
+        System.out.println(getJsonStuffInfo());
+        try (Writer writer = new FileWriter(getJsonStuffInfo())) {
+            Gson gson = new GsonBuilder().create();
+            gson.toJson(stuffList, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public String chooseTemplateFile()
+    {
+
+        FileDialog dialog = new FileDialog((Frame)null, "Select File to Open");
+        dialog.setMode(FileDialog.LOAD);
+        dialog.setVisible(true);
+        String file = "/" + dialog.getFile();
+        return file;
+    }
+    public void addImage()
+    {
+        newStuff.setImgPath(chooseTemplateFile());
+    }
+    public void passStuff()
+    {
+        newStuff.setId(stuffList.size());
+        newStuff.setType(inputType.getText());
+        newStuff.setName(inputName.getText());
+        newStuff.setDescription(inputDescription.getText());
+    }
+
+    public void readFile2() throws FileNotFoundException {
+        String jsonPath;
+        if(comboSetLanguage.getSelectionModel().getSelectedItem().toString().equals("English"))
+        {
+            jsonPath = "C:\\Users\\kacper\\Desktop\\zajecia2018\\ProgramowanieJava\\ProgramowanieJavaLab2\\stuffInfoEng.json";
+        }
+        else
+        {
+            jsonPath = "C:\\Users\\kacper\\Desktop\\zajecia2018\\ProgramowanieJava\\ProgramowanieJavaLab2\\stuffInfo.json";
+
+        }
+        setJsonStuffInfo(jsonPath);
+
+        File file = new File(getJsonStuffInfo());
+        Scanner sc = new Scanner(file);
+
+        while(sc.hasNextLine()) {
+            setJsonStuffString(getJsonStuffString()+sc.nextLine());
+        }
+
+        String temp = "";
+        temp = getJsonStuffString().replace("\t", "");
+        setJsonStuffString(temp);
+
+    }
+
+    public void getJson2() throws JSONException, FileNotFoundException {
+
+        readFile2();
+        Stuff[] stuffs = new Gson().fromJson(getJsonStuffString(), Stuff[].class);
+        stuffList = new ArrayList<Stuff>(Arrays.asList(stuffs));;
+        setTableStuff();
+    }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        List<String> list = new ArrayList<String>();
+        list.add("Polski");
+        list.add("English");
+        ObservableList obList = FXCollections.observableList(list);
+        comboSetLanguage.getItems().clear();
+        comboSetLanguage.setItems(obList);
+    }
+
+    public void selectLanguage() throws FileNotFoundException {
+        try
+        {
+            getJson2();
+            setGUI();
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(null,"Wybór może wystąpić tylko raz");
+        }
+
+    }
+
+    public void setGUI()
+    {
+        if(comboSetLanguage.getSelectionModel().getSelectedItem().toString().equals("English"))
+        {
+            labelType.setText("Type");
+            labelDescription.setText("Description");
+            labelName.setText("Name");
+            buttonAddImage.setText("Add image");
+            buttonDelete.setText("Delete selected item");
+            saveState.setText("Save state");
+            buttonAdd.setText("Add item");
+        }
+    }
+
+//        ObservableList<String> options =
+//                FXCollections.observableArrayList(
+//                        "Polski",
+//                        "English"
+//                );
+//        comboSetLanguage = new ComboBox(options);
 }

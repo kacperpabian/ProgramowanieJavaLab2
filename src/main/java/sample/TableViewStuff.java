@@ -1,20 +1,35 @@
 package sample;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.image.ImageView;
 
 public class TableViewStuff {
 
+    private final SimpleIntegerProperty id;
     private final SimpleStringProperty type;
     private final SimpleStringProperty name;
     private final SimpleStringProperty description;
     private ImageView image;
 
-    public TableViewStuff(String type, String name, String description, ImageView img) {
+    public TableViewStuff(int id, String type, String name, String description, ImageView img) {
         this.type = new SimpleStringProperty(type);
         this.name = new SimpleStringProperty(name);
         this.description = new SimpleStringProperty(description);
         this.image = img;
+        this.id = new SimpleIntegerProperty(id);
+    }
+
+    public int getId() {
+        return id.get();
+    }
+
+    public SimpleIntegerProperty idProperty() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id.set(id);
     }
 
     public String getType() {
