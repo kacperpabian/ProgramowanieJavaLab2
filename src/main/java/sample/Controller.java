@@ -21,7 +21,7 @@ public class Controller {
             final Node source = (Node) event.getSource();
             final Stage stage1 = (Stage) source.getScene().getWindow();
             stage1.close();
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Stuff.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Stuff2.fxml"));
             Parent root1 = (Parent) fxmlLoader.load();
             Stage stage = new Stage();
 
