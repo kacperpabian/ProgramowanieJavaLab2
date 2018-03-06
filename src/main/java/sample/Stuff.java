@@ -1,10 +1,34 @@
 package sample;
 
 public class Stuff {
+    private int id;
     private String type;
     private String name;
     private String imgPath;
     private String description;
+
+
+    public Stuff()
+    {
+
+    }
+
+    public Stuff(int id, String type, String name, String imgPath, String description) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+        this.imgPath = imgPath;
+        this.description = description;
+    }
+
+    public int getId() {
+
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getType() {
         return type;

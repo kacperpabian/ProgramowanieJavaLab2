@@ -15,7 +15,7 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/Welcome.fxml"));
         primaryStage.setTitle("Stuff");
         primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.getIcons().add(new Image("file:Resources\\icon.png"));
+        primaryStage.getIcons().add(new Image("/icon.png"));
         primaryStage.show();
     }
 
